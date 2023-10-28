@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "declaration": true,
+    "sourceMap": true,
+//    for routing-controllers
+    "experimentalDecorators": true,
+//    for routing-controllers
+    "emitDecoratorMetadata": true,
+    "outDir": "./dist",
+    "module": "commonjs",
+    "esModuleInterop": true,
+  }
+}
