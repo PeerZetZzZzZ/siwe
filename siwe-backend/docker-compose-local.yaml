@@ -15,7 +15,6 @@ services:
       - DB_NAME=siwe
       - DB_PASSWORD=postgres
       - DB_PORT=5432
-      - IS_LOCALHOST=true
       - SESSION_SECRET=eaaafa09-9ae5-47a9-9a16-69cec0a3db1c
     depends_on:
       siwe-postgres:

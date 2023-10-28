@@ -1,5 +1,6 @@
 # SIWE App
-Sign-in-with-Ethereum (SIWE) application.
+Sign-in-with-Ethereum (SIWE) application. It allows to sign-in to the application using Ethereum wallet and then
+create and save a profile with username and bio. Profile can be edited. Username must be unique.
 
 ## Architecture
 Application consist of client web application, backend service and database. 

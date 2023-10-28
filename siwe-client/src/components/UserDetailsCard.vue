@@ -1,7 +1,7 @@
 <template>
   <q-card bordered class="q-pa-md">
     <q-card-section class="bg-black text-white">
-      <div class="text-h4 text-center">{{ header !== '' ? header: 'Your profile' }}</div>
+      <div class="text-h4 text-center">Your profile</div>
       <div class="text-center q-pt-md" v-if="editMode"
            :class="$q.platform.is.mobile ? 'text-subtitle2' : 'text-h6'">Please edit your profile details and save</div>
     </q-card-section>
@@ -76,16 +76,13 @@ const props = defineProps({
     required: true,
     default: undefined,
   },
-  header: {
-    type: String,
-    required: false,
-    default: '',
-  },
 });
+
 const setFormValues = () => {
   username.value = props.userDetails?.username ?? '';
   bio.value = props.userDetails?.bio ?? '';
-}
+};
+
 onMounted(() => {
   setFormValues();
   if (props.userDetails?.username === '' && props.userDetails?.bio === '') {
@@ -107,7 +104,8 @@ watch(() => username.value, (value, oldValue) => {
 watch(() => bio.value, (value, oldValue) => {
   if (oldValue !== '') {
     bioDirty.value = true;
-  }});
+  }
+});
 
 const usernameIsEmpty = computed(() => {
   return username.value.trim() === '';

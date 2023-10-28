@@ -2,9 +2,11 @@
   <q-page>
     <div class="row items-center justify-center q-pa-lg vertical-middle"  :style="`height: ${rowHeight}`">
       <div class="col-lg-6 col-xs-grow items-center justify-center" >
-        <UserDetailsCard :user-details="userDetails" :header="userDetailsCardHeader" v-if="userDetails && connectionStore.isLogged"></UserDetailsCard>
+
+        <UserDetailsCard :user-details="userDetails" v-if="userDetails && connectionStore.isLogged"></UserDetailsCard>
+
         <div v-if="profileNotExists && connectionStore.isLogged" class="text-center">
-          <span class="text-h4">Your profile <b>not exists</b> yet</span><br>
+          <span class="text-h4">Your profile <b class="text-red-8">not exists</b> yet</span><br>
           <q-btn label="Create profile" color="black" class="q-mt-xs" square @click="createProfile"></q-btn>
         </div>
 
@@ -18,7 +20,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import UserDetailsCard from 'components/UserDetailsCard.vue';
@@ -29,7 +30,6 @@ import { UserDetailsDto } from 'src/api/dto/user-details-dto';
 
 const userDetails = ref(<UserDetailsDto | undefined>undefined);
 const profileNotExists = ref(false);
-const userDetailsCardHeader = ref('');
 const $q = useQuasar();
 const connectionStore = useConnectionStore();
 const rowHeight = ref('100%');
@@ -56,10 +56,11 @@ watch(() => connectionStore.isLogged, () => {
     fetchUserData();
   }
 });
+
 const calculateFullscreenRowHeight = () => {
   rowHeight.value = (window.innerHeight - 40) + 'px';
+};
 
-}
 onMounted(async () => {
   await fetchUserData();
   calculateFullscreenRowHeight();
@@ -67,13 +68,12 @@ onMounted(async () => {
 
 const createProfile = () => {
   userDetails.value = new UserDetailsDto('', '');
-  userDetailsCardHeader.value = 'Create your profile';
   profileNotExists.value = false;
-}
+};
 
 window.addEventListener('resize', calculateFullscreenRowHeight, true);
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', calculateFullscreenRowHeight, true)
+  window.removeEventListener('resize', calculateFullscreenRowHeight, true);
 });
 </script>

@@ -12,5 +12,4 @@ const routes: RouteRecordRaw[] = [
     component: () => import('pages/UserDetailsPage.vue'),
   },
 ];
-
 export default routes;

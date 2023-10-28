@@ -32,5 +32,4 @@ const login = async () => {
   setLogged(signerAddress);
   showSuccessMessage('Logged in!');
 }
-
 </script>

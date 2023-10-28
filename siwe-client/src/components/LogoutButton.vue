@@ -14,11 +14,12 @@ import { computed } from 'vue';
 
 const $q = useQuasar();
 const connectionStore = useConnectionStore();
+
 const logout = async () => {
   await postAuthorized('/api/rest/v1/user/logout');
   setLoggedOut();
   showSuccessMessage('Logged out!');
-}
+};
 
 const account = computed(() => {
   if ($q.platform.is.mobile) {

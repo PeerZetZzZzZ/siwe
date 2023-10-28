@@ -7,7 +7,6 @@ export const showSuccessMessage = (message: string) => {
         icon: 'check',
         position: 'top',
     });
-
 }
 
 export const showErrorMessage = (message: string) => {

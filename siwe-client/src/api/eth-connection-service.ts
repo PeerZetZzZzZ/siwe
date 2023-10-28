@@ -14,11 +14,11 @@ export class EthConnectionService {
     }
 
     async connectWithMetamask(): Promise<void> {
-        if (window.ethereum === undefined) {
+        if ((<any>window).ethereum === undefined) {
             showErrorMessage('Please install Metamask/Rabby');
             throw new Error('Metamask not installed');
         }
-        this.provider = new ethers.BrowserProvider(window.ethereum);
+        this.provider = new ethers.BrowserProvider((<any>window).ethereum);
         this.signer = await this.provider.getSigner();
         this.isConnected = true;
     }
