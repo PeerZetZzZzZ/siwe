@@ -6,14 +6,14 @@ import { connectToDb, SEQUELIZE } from './infrastructure/orm/sequelize-connectio
 import { useExpressServer } from 'routing-controllers';
 import { syncOrm } from './infrastructure/orm/sync-orm-service';
 
-const SESSION_CHECK_EXPIERATION_INTERVAL = 15 * 60 * 1000; // every 15 minutes
-const SESSION_EXPIRATION = 60 * 60 * 1000; // 1 hour
+const SESSION_CHECK_EXPIRATION_INTERVAL = Number(process.env.SESSION_CHECK_EXPIRATION_INTERVAL_MINUTES) * 60 * 1000;
+const SESSION_EXPIRATION = Number(process.env.SESSION_EXPIRATION_MINUTES) * 60 * 1000;
 const main = async () => {
     await connectToDb();
     await syncOrm();
     const sequelizeStore = new SequelizeStore({
         db: SEQUELIZE,
-        checkExpirationInterval: SESSION_CHECK_EXPIERATION_INTERVAL,
+        checkExpirationInterval: SESSION_CHECK_EXPIRATION_INTERVAL,
         expiration: SESSION_EXPIRATION
     });
     await sequelizeStore.sync();

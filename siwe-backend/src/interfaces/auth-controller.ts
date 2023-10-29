@@ -32,10 +32,11 @@ export class DaoController {
     @Post('/logout')
     async logout(
             @Res() res: Response,
+            @Res() req: Response,
             @Session() session: Session) {
         if (session.siwe) {
             const userAddress = session.siwe.address;
-            session.siwe = undefined;
+            (<any>req).session = null;
             console.log(`Logout user with address: ${userAddress}`);
             return res.sendStatus(StatusCode.SuccessNoContent);
         } else {

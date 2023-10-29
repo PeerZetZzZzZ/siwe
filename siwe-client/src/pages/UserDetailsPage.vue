@@ -33,6 +33,7 @@ const profileNotExists = ref(false);
 const $q = useQuasar();
 const connectionStore = useConnectionStore();
 const rowHeight = ref('100%');
+
 const fetchUserData = async () => {
   try {
     $q.loading.show({
@@ -42,24 +43,27 @@ const fetchUserData = async () => {
       messageColor: 'white',
     });
     userDetails.value = await getAuthorized<UserDetailsDto>('/api/rest/v1/user/details');
+    profileNotExists.value = false;
     $q.loading.hide();
   } catch (err: any) {
     $q.loading.hide();
     if (err.response?.status === 404) {
       profileNotExists.value = true;
+      userDetails.value = undefined;
     }
   }
 };
 
-watch(() => connectionStore.isLogged, () => {
+watch(() => connectionStore.account, () => {
   if (connectionStore.isLogged) {
     fetchUserData();
+  } else {
+    profileNotExists.value = true;
+    userDetails.value = undefined;
   }
 });
 
-const calculateFullscreenRowHeight = () => {
-  rowHeight.value = (window.innerHeight - 40) + 'px';
-};
+const calculateFullscreenRowHeight = () => rowHeight.value = (window.innerHeight - 40) + 'px';
 
 onMounted(async () => {
   await fetchUserData();
