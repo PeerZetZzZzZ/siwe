@@ -1,4 +1,4 @@
-import { Body, Get, HttpCode, JsonController, Post, Put, Req, Res, Session } from 'routing-controllers';
+import { Body, Get, HttpCode, JsonController, Post, Put, Res, Session } from 'routing-controllers';
 import { generateNonce, SiweMessage } from 'siwe';
 import { SiweLoginDto } from './dto/siwe-login-dto';
 import { Response } from 'express-serve-static-core';
@@ -25,6 +25,8 @@ export class DaoController {
             return res.sendStatus(StatusCode.SuccessNoContent);
         } else {
             console.log(`Invalid user login attempt`);
+            session.siwe = undefined;
+            session.nonce = undefined;
             return res.sendStatus(StatusCode.ClientErrorBadRequest);
         }
     }
@@ -32,11 +34,11 @@ export class DaoController {
     @Post('/logout')
     async logout(
             @Res() res: Response,
-            @Res() req: Response,
             @Session() session: Session) {
         if (session.siwe) {
             const userAddress = session.siwe.address;
-            (<any>req).session = null;
+            session.siwe = undefined;
+            session.nonce = undefined;
             console.log(`Logout user with address: ${userAddress}`);
             return res.sendStatus(StatusCode.SuccessNoContent);
         } else {
@@ -78,18 +80,19 @@ export class DaoController {
             @Body({required: true}) createUserDto: UserDetailsDto) {
         if (session.siwe) {
             const result = await createOrUpdateUserDetails(session.siwe.address, createUserDto);
-            if (result === UserDetailsSaveResult.CREATED) {
-                console.log(`Created user details for address: ${session.siwe.address}`);
-                return res.sendStatus(StatusCode.SuccessCreated);
-            } else if (result === UserDetailsSaveResult.UPDATED) {
-                console.log(`Updated user details for address: ${session.siwe.address}`);
-                return res.sendStatus(StatusCode.SuccessNoContent);
-            } else if (result === UserDetailsSaveResult.USERNAME_NOT_UNIQUE) {
-                console.log(`Updating user details for address ${session.siwe.address} failed. '${createUserDto.username} username is already taken!'`);
-                return res.status(StatusCode.ClientErrorBadRequest).send({
-                    errorCode: '1',
-                    message: UserDetailsSaveResult.USERNAME_NOT_UNIQUE,
-                });
+            switch (result) {
+                case UserDetailsSaveResult.CREATED:
+                    console.log(`Created user details for address: ${session.siwe.address}`);
+                    return res.sendStatus(StatusCode.SuccessCreated);
+                case UserDetailsSaveResult.UPDATED:
+                    console.log(`Updated user details for address: ${session.siwe.address}`);
+                    return res.sendStatus(StatusCode.SuccessNoContent);
+                case UserDetailsSaveResult.USERNAME_NOT_UNIQUE:
+                    console.log(`Updating user details for address ${session.siwe.address} failed. '${createUserDto.username} username is already taken!'`);
+                    return res.status(StatusCode.ClientErrorBadRequest).send({
+                        errorCode: '1',
+                        message: UserDetailsSaveResult.USERNAME_NOT_UNIQUE,
+                    });
             }
         } else {
             console.log(`Saving user details failed. User unauthorized`);

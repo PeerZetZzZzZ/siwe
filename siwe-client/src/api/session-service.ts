@@ -2,6 +2,7 @@ import { getLoggedAccount, removeLoggedAccount, setLoggedAccount } from 'src/api
 import { useConnectionStore } from 'stores/connection-store';
 
 const connectionStore = useConnectionStore();
+
 export const setLogged = (account: string) => {
   setLoggedAccount(account);
   connectionStore.setConnected(account, true);

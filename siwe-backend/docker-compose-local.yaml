@@ -18,6 +18,8 @@ services:
       - SESSION_SECRET=eaaafa09-9ae5-47a9-9a16-69cec0a3db1c
       - SESSION_CHECK_EXPIRATION_INTERVAL_MINUTES=60
       - SESSION_EXPIRATION_MINUTES=1440 #24 hours
+      - SIWE_DOMAIN=localhost
+      - SIWE_URI=http://localhost/api/rest/v1/user/login
     depends_on:
       siwe-postgres:
         condition: service_healthy

@@ -1,16 +1,27 @@
 import { ethers } from 'ethers';
-import { EthereumProvider } from "@walletconnect/ethereum-provider";
+import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/vue'
 import { showErrorMessage } from 'src/api/notify-service';
+import { Web3Modal } from '@web3modal/ethers5/dist/types/src/client';
 
 export class EthConnectionService {
-
-    private provider: ethers.BrowserProvider | undefined;
     private signer: ethers.Signer | undefined;
-    private isConnected:  boolean;
+    private isConnected: boolean;
+    private walletConnectModal: Web3Modal;
+
     constructor() {
-        this.provider = undefined;
         this.signer = undefined;
         this.isConnected = false;
+        const metadata = {
+            name: 'SIWE App',
+            description: 'SIWE Application',
+            url: 'https://webrand3.com',
+            icons: []
+        };
+        this.walletConnectModal = createWeb3Modal({
+            ethersConfig: defaultConfig({metadata}),
+            chains: [1],
+            projectId: <string>process.env.WALLET_CONNECT_PROJECT_ID,
+        });
     }
 
     async connectWithMetamask(): Promise<void> {
@@ -18,20 +29,9 @@ export class EthConnectionService {
             showErrorMessage('Please install Metamask/Rabby');
             throw new Error('Metamask not installed');
         }
-        this.provider = new ethers.BrowserProvider((<any>window).ethereum);
-        this.signer = await this.provider.getSigner();
-        this.isConnected = true;
-    }
-
-    async connectWithWalletConnect(): Promise<void> {
-        const provider = await EthereumProvider.init({
-            projectId: '809ab615b0eea74b157d4119de6bd41d', // REQUIRED your projectId
-            chains: [1], // REQUIRED supported chains [1, 3, 4, 5, 42, 100, 31337
-            showQrModal: true, // REQUIRED set to "true" to use @walletconnect/modal
-        });
-        this.provider = new ethers.BrowserProvider(provider);
-        await provider.connect();
-        this.signer = await this.provider.getSigner();
+        const provider = new ethers.providers.Web3Provider((<any>window).ethereum, "any");
+        await (<any>window).ethereum.enable();
+        this.signer = provider.getSigner();
         this.isConnected = true;
     }
 
@@ -40,6 +40,15 @@ export class EthConnectionService {
             throw new Error('Not connected');
         }
         return this.signer!;
+    }
+
+    async closeModal() {
+        await this.walletConnectModal.close();
+    }
+
+    async getWalletConnectSigner(): Promise<ethers.Signer> {
+        await this.walletConnectModal.open();
+        return this.walletConnectModal.getSigner()!;
     }
 }
 

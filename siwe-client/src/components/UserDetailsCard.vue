@@ -19,7 +19,7 @@
           Username can't be empty
         </div>
         <div v-if="usernameAlreadyExistsError">
-          Username '{{usernameWhichAlreadyExists}}' is already taken. Please chooser another one.
+          Username '{{usernameWhichAlreadyExists}}' is already taken. Please choose another one.
         </div>
       </template>
     </q-input>
@@ -109,23 +109,24 @@ const createUserDetails = async () => {
     await putAuthorized('/api/rest/v1/user/details', new UserDetailsDto(username.value.trim(), bio.value.trim()));
     showSuccessMessage('User profile saved!');
     editMode.value = false;
+    isCreation.value = false;
     userDetailsBeforeEdit.value = userDetailsDto;
   } catch (err: any) {
     if (err.response?.status === 400 && err.response?.data.errorCode === '1') {
       usernameWhichAlreadyExists.value = username.value.trim();
       usernameAlreadyExistsError.value = true;
-      showErrorMessage(`Username "${username.value}" is already taken!`)
+      showErrorMessage(`Username "${username.value}" is already taken!`);
     }
   }
-}
+};
 
 const enterEditMode = () => {
   editMode.value = true;
-}
+};
 
 const quitEditMode = () => {
   username.value = userDetailsBeforeEdit.value.username;
   bio.value = userDetailsBeforeEdit.value.bio;
   editMode.value = false;
-}
+};
 </script>

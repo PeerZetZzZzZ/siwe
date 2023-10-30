@@ -1,13 +1,14 @@
 import "reflect-metadata";
 import Session from 'express-session';
 import express from 'express';
-const SequelizeStore = require("connect-session-sequelize")(Session.Store);
 import { connectToDb, SEQUELIZE } from './infrastructure/orm/sequelize-connection-service';
 import { useExpressServer } from 'routing-controllers';
 import { syncOrm } from './infrastructure/orm/sync-orm-service';
+const SequelizeStore = require("connect-session-sequelize")(Session.Store);
 
 const SESSION_CHECK_EXPIRATION_INTERVAL = Number(process.env.SESSION_CHECK_EXPIRATION_INTERVAL_MINUTES) * 60 * 1000;
 const SESSION_EXPIRATION = Number(process.env.SESSION_EXPIRATION_MINUTES) * 60 * 1000;
+
 const main = async () => {
     await connectToDb();
     await syncOrm();
@@ -30,6 +31,7 @@ const main = async () => {
     );
     useExpressServer(app, {
         controllers: [`${__dirname}/interfaces/**/*`],
+        defaultErrorHandler: false,
     });
     app.listen(8000, () => {
         console.log('SIWE backend started!');

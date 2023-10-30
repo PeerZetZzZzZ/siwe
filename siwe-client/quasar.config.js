@@ -71,7 +71,8 @@ module.exports = configure(function (ctx) {
       env: {
         IS_LOCALHOST: ctx.dev,
         SIWE_DOMAIN: ctx.dev ? 'localhost' : 'webrand3.com',
-        SIWE_URI: ctx.dev ? 'http://localhost/api/rest/v1/user/login' : 'https://webrand3.com/api/rest/v1/user/login'
+        SIWE_URI: ctx.dev ? 'http://localhost/api/rest/v1/user/login' : 'https://webrand3.com/api/rest/v1/user/login',
+        WALLET_CONNECT_PROJECT_ID: '809ab615b0eea74b157d4119de6bd41d'
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

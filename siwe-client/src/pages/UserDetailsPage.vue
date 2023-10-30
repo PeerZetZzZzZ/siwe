@@ -34,6 +34,11 @@ const $q = useQuasar();
 const connectionStore = useConnectionStore();
 const rowHeight = ref('100%');
 
+onMounted(async () => {
+  await fetchUserData();
+  calculateFullscreenRowHeight();
+});
+
 const fetchUserData = async () => {
   try {
     $q.loading.show({
@@ -64,11 +69,6 @@ watch(() => connectionStore.account, () => {
 });
 
 const calculateFullscreenRowHeight = () => rowHeight.value = (window.innerHeight - 40) + 'px';
-
-onMounted(async () => {
-  await fetchUserData();
-  calculateFullscreenRowHeight();
-});
 
 const createProfile = () => {
   userDetails.value = new UserDetailsDto('', '');
